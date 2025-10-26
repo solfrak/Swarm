@@ -1,9 +1,8 @@
 #include "vkinstance.h"
-#include "vkinstance.h"
 
 namespace swarm
 {
-    InstanceHandle CreateInstance(InstanceCreateInfo &instanceCreateInfo)
+    InstanceHandle CreateInstance(const InstanceCreateInfo &instanceCreateInfo)
     {
         assert(g_SwarmLibrary.isInitialized);
 
@@ -16,25 +15,28 @@ namespace swarm
             builder.set_app_version(instanceCreateInfo.applicationVersion);
 
         if (instanceCreateInfo.isDebug)
+        {
             builder.request_validation_layers();
+            builder.use_default_debug_messenger();
+        }
 
         const auto builderResult = builder.build();
 
         if (!builderResult.has_value())
             return nullptr;
 
-        Instance_T* instance = static_cast<Instance_T *>(g_SwarmLibrary.allocFn(sizeof(Instance_T)));
+        Instance_T* instance = SWARM_NEW<Instance_T>();
         instance->instance = builderResult.value();
         return instance;
     }
 
-    void DestroyInstance(InstanceHandle handle)
+    void DestroyInstance(InstanceHandle &handle)
     {
         assert(g_SwarmLibrary.isInitialized);
         assert(handle != nullptr);
 
         vkb::destroy_instance(handle->instance);
 
-        g_SwarmLibrary.freeFn(handle);
+        SWARM_DELETE(handle);
     }
 }

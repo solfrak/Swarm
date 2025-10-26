@@ -17,7 +17,7 @@ if(SWARM_USE_VULKAN STREQUAL "ON")
     target_sources(Swarm PRIVATE ${VULKAN_SRC})
 
     FIND_PACKAGE(Vulkan REQUIRED)
-    target_link_libraries(Swarm PRIVATE Vulkan)
+    target_link_libraries(Swarm PRIVATE vulkan)
 
     add_subdirectory(extern/vk-bootstrap)
     target_link_libraries(Swarm PRIVATE vk-bootstrap)
