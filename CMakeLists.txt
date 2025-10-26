@@ -25,3 +25,6 @@ endif ()
 
 target_include_directories(Swarm PUBLIC include)
 target_include_directories(Swarm PRIVATE src/common)
+
+add_subdirectory(extern/glm)
+target_link_libraries(Swarm PUBLIC glm)
