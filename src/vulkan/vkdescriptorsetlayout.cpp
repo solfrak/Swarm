@@ -17,6 +17,8 @@ namespace swarm
                 return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             case BindingType::IMAGE_SAMPLER:
                 return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            default:
+                return VK_DESCRIPTOR_TYPE_MAX_ENUM;
         }
     }
 
@@ -28,6 +30,8 @@ namespace swarm
                 return VK_SHADER_STAGE_VERTEX_BIT;
             case ShaderStage::FRAGMENT:
                 return VK_SHADER_STAGE_FRAGMENT_BIT;
+            default:
+                return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
         }
     }
 

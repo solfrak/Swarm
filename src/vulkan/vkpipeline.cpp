@@ -2,9 +2,11 @@
 #include "vkshader.h"
 #include "vkdevice.h"
 #include "vkrenderpass.h"
+#include "utils.h"
 
 #include <cassert>
 #include <vector>
+#include <array>
 
 #include "vkdescriptorsetlayout.h"
 
@@ -33,12 +35,12 @@ namespace swarm
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-        auto bindingDescription = Vertex::getBindingDescription();
-        auto attributeDescriptions = Vertex::getAttributeDescriptions();
+        auto bindingDescriptions = BuildVertexInputBindings(pipelineCreateInfo.vertexSpec);
+        auto attributeDescriptions = BuildVertexInputAttributes(pipelineCreateInfo.vertexSpec);
 
-        vertexInputInfo.vertexBindingDescriptionCount = 1;
+        vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
@@ -137,7 +139,7 @@ namespace swarm
         VkPipelineLayout pipelineLayout{VK_NULL_HANDLE};
         if (vkCreatePipelineLayout(device->device, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
         {
-            throw std::runtime_error("failed to create pipeline layout!");
+            return nullptr;
         }
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};

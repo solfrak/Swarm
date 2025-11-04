@@ -21,6 +21,9 @@ if(SWARM_USE_VULKAN STREQUAL "ON")
 
     add_subdirectory(extern/vk-bootstrap)
     target_link_libraries(Swarm PRIVATE vk-bootstrap)
+
+    add_subdirectory(extern/vma)
+    target_link_libraries(Swarm PRIVATE GPUOpen::VulkanMemoryAllocator)
 endif ()
 
 target_include_directories(Swarm PUBLIC include)

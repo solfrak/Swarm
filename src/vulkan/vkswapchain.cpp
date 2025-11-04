@@ -10,6 +10,8 @@ namespace swarm
         assert(device);
 
         vkb::SwapchainBuilder swapchainBuilder{device->device};
+        swapchainBuilder.set_desired_extent(900, 720);
+
         const auto swapchainResult = swapchainBuilder.build();
 
         if (!swapchainResult.has_value())
@@ -36,5 +38,17 @@ namespace swarm
         vkb::destroy_swapchain(handle->swapchain);
 
         SWARM_DELETE(handle);
+    }
+
+    void GetSwapchainExtent(SwapchainHandle handle, unsigned int &width, unsigned int &height)
+    {
+        width = handle->swapchain.extent.width;
+        height = handle->swapchain.extent.height;
+    }
+
+
+    unsigned int GetSwapchainImageCount(SwapchainHandle handle)
+    {
+        return handle->imageViews.size();
     }
 }
