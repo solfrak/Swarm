@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.5)
 project(Swarm)
 
 option(SWARM_USE_VULKAN "Use Vulkan backend" OFF)
@@ -17,7 +17,7 @@ if(SWARM_USE_VULKAN STREQUAL "ON")
     target_sources(Swarm PRIVATE ${VULKAN_SRC})
 
     FIND_PACKAGE(Vulkan REQUIRED)
-    target_link_libraries(Swarm PRIVATE vulkan)
+    target_link_libraries(Swarm PRIVATE Vulkan::Vulkan)
 
     add_subdirectory(extern/vk-bootstrap)
     target_link_libraries(Swarm PRIVATE vk-bootstrap)

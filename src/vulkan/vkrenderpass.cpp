@@ -6,6 +6,7 @@
 #include <swarm_internal.h>
 
 #include <cassert>
+#include <array>
 
 
 namespace swarm

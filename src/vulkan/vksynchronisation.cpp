@@ -1,5 +1,6 @@
 #include "vksynchronisation.h"
 
+#include <array>
 #include <cassert>
 
 #include "vkcommandbuffer.h"
