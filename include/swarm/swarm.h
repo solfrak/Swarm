@@ -56,6 +56,7 @@ using object##Handle = object##_T*;
         union
         {
             void *waylandSurface{nullptr};
+            void* win32Hwnd;
             unsigned int x11WindowId;
         } surfaceReference;
 
@@ -63,6 +64,7 @@ using object##Handle = object##_T*;
         {
             void* waylandDisplay{nullptr};
             void* x11Dpy;
+            void* win32Hinstance;
         } displayReference;
 
         SessionType type{SessionType::INVALID};
