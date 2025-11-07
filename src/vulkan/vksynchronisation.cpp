@@ -75,12 +75,16 @@ namespace swarm
         SWARM_DELETE(handle);
     }
 
-    void draw(DeviceHandle device, FenceHandle inFlightFence, SemaphoreHandle imageAvailableSemaphore, const std::vector<SemaphoreHandle> &renderFinishedSemaphore, SwapchainHandle swapchain, CommandBufferHandle commandBuffer, RenderpassHandle renderpass, PipelineHandle pipeline, FramebufferHandle framebuffer)
+    void draw(DeviceHandle device, FenceHandle inFlightFence, SemaphoreHandle imageAvailableSemaphore,
+              const std::vector<SemaphoreHandle> &renderFinishedSemaphore, SwapchainHandle swapchain,
+              CommandBufferHandle commandBuffer, RenderpassHandle renderpass, PipelineHandle pipeline,
+              FramebufferHandle framebuffer, BufferHandle vertexBuffer, BufferHandle indexBuffer,
+              BufferHandle uniformBuffer, TextureHandle texture, SamplerHandle sampler)
     {
-        vkWaitForFences(device->device, 1, &inFlightFence->fence, VK_TRUE, UINT64_MAX);
 
         uint32_t imageIndex;
-        vkAcquireNextImageKHR(device->device, swapchain->swapchain, UINT64_MAX, imageAvailableSemaphore->semaphore, VK_NULL_HANDLE, &imageIndex);
+        vkAcquireNextImageKHR(device->device, swapchain->swapchain, UINT64_MAX, imageAvailableSemaphore->semaphore,
+                              VK_NULL_HANDLE, &imageIndex);
 
         vkResetFences(device->device, 1, &inFlightFence->fence);
         vkResetCommandBuffer(commandBuffer->commandBuffer, 0);
@@ -88,7 +92,8 @@ namespace swarm
             VkCommandBufferBeginInfo beginInfo{};
             beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-            if (vkBeginCommandBuffer(commandBuffer->commandBuffer, &beginInfo) != VK_SUCCESS) {
+            if (vkBeginCommandBuffer(commandBuffer->commandBuffer, &beginInfo) != VK_SUCCESS)
+            {
                 throw std::runtime_error("failed to begin recording command buffer!");
             }
 
@@ -107,28 +112,29 @@ namespace swarm
             renderPassInfo.pClearValues = clearValues.data();
 
             vkCmdBeginRenderPass(commandBuffer->commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-            //
-            // vkCmdBindPipeline(commandBuffer->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
-            //
-            // VkViewport viewport{};
-            // viewport.x = 0.0f;
-            // viewport.y = 0.0f;
-            // viewport.width = static_cast<float>(swapchain->swapchain.extent.width);
-            // viewport.height = static_cast<float>(swapchain->swapchain.extent.height);
-            // viewport.minDepth = 0.0f;
-            // viewport.maxDepth = 1.0f;
-            // vkCmdSetViewport(commandBuffer->commandBuffer, 0, 1, &viewport);
-            //
-            // VkRect2D scissor{};
-            // scissor.offset = {0, 0};
-            // scissor.extent = swapchain->swapchain.extent;
-            // vkCmdSetScissor(commandBuffer->commandBuffer, 0, 1, &scissor);
-            //
-            // // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
-            //
+
+            vkCmdBindPipeline(commandBuffer->commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->pipeline);
+
+            VkViewport viewport{};
+            viewport.x = 0.0f;
+            viewport.y = 0.0f;
+            viewport.width = static_cast<float>(swapchain->swapchain.extent.width);
+            viewport.height = static_cast<float>(swapchain->swapchain.extent.height);
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+            vkCmdSetViewport(commandBuffer->commandBuffer, 0, 1, &viewport);
+
+            VkRect2D scissor{};
+            scissor.offset = {0, 0};
+            scissor.extent = swapchain->swapchain.extent;
+            vkCmdSetScissor(commandBuffer->commandBuffer, 0, 1, &scissor);
+
+            // vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+
             vkCmdEndRenderPass(commandBuffer->commandBuffer);
 
-            if (vkEndCommandBuffer(commandBuffer->commandBuffer) != VK_SUCCESS) {
+            if (vkEndCommandBuffer(commandBuffer->commandBuffer) != VK_SUCCESS)
+            {
                 throw std::runtime_error("failed to record command buffer!");
             }
         }
@@ -148,7 +154,9 @@ namespace swarm
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pSignalSemaphores = signalSemaphores;
 
-        if (vkQueueSubmit(device->device.get_queue(vkb::QueueType::graphics).value(), 1, &submitInfo, inFlightFence->fence) != VK_SUCCESS) {
+        if (vkQueueSubmit(device->device.get_queue(vkb::QueueType::graphics).value(), 1, &submitInfo,
+                          inFlightFence->fence) != VK_SUCCESS)
+        {
             throw std::runtime_error("failed to submit draw command buffer!");
         }
 
@@ -166,5 +174,4 @@ namespace swarm
 
         vkQueuePresentKHR(device->device.get_queue(vkb::QueueType::present).value(), &presentInfo);
     }
-
 }

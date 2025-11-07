@@ -407,6 +407,25 @@ using object##Handle = object##_T*;
     SamplerHandle CreateSampler(DeviceHandle device, const SamplerCreateInfo& createInfo);
     void DestroySampler(DeviceHandle device, SamplerHandle& handle);
 
-    void draw(DeviceHandle device, FenceHandle inFlightFence, SemaphoreHandle imageAvailableSemaphore, const std::vector<SemaphoreHandle> &renderFinishedSemaphore, SwapchainHandle swapchain, CommandBufferHandle commandBuffer, RenderpassHandle renderpass, PipelineHandle pipeline, FramebufferHandle framebuffer);
+    //============================ Rendering cmd ============================
+    struct CmdBeginFrameInfo
+    {
+        DeviceHandle device;
+        FenceHandle inFlightFence;
 
+        Swapchainchain
+    };
+    void CmdBeginFrame(CmdBeginFrameInfo& info);
+
+    struct CmdEndFrameInfo
+    {
+
+    };
+    void CmdEndFrame(CmdEndFrameInfo& info);
+
+    struct CmdSubmitInfo
+    {
+
+    };
+    void CmdSubmitFrame(CmdSubmitInfo& info);
 }

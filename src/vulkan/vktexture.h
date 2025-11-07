@@ -1,5 +1,5 @@
 #pragma once
-#include "swarm_internal.h"
+
 #include <vulkan/vulkan.h>
 #include <vk_mem_alloc.h>
 namespace swarm
