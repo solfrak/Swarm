@@ -109,6 +109,21 @@ using object##Handle = object##_T*;
     RenderpassHandle CreateRenderpass(DeviceHandle device, SwapchainHandle swapchain, const RenderpassCreateInfo &renderpassCreateInfo);
     void DestroyRenderpass(DeviceHandle device, RenderpassHandle &handle);
 
+    enum class ClearValueType
+    {
+        COLOR, DEPTH, DEPTH_STENCIL
+    };
+    struct ClearValue
+    {
+        ClearValueType type{ClearValueType::COLOR};
+        union
+        {
+            struct { float r, g, b, a; } color;
+            struct { float depth; } depthOnly;
+            struct { float depth; uint32_t stencil; } depthStencil;
+        };
+    };
+    void RenderpassSetClearValue(RenderpassHandle renderpass, const std::vector<ClearValue>& clearValues);
 
     //============================ Framebuffer ============================
 
@@ -412,20 +427,35 @@ using object##Handle = object##_T*;
     {
         DeviceHandle device;
         FenceHandle inFlightFence;
+        SemaphoreHandle imageAvailableSemaphore;
 
-        Swapchainchain
+        SwapchainHandle swapchain;
+        CommandBufferHandle commandBuffer;
+        RenderpassHandle renderpass;
+        FramebufferHandle framebuffer;
+
     };
-    void CmdBeginFrame(CmdBeginFrameInfo& info);
+
+    unsigned int CmdBeginFrame(CmdBeginFrameInfo &info);
 
     struct CmdEndFrameInfo
     {
-
+        CommandBufferHandle commandBuffer;
     };
     void CmdEndFrame(CmdEndFrameInfo& info);
 
     struct CmdSubmitInfo
     {
-
+        DeviceHandle device;
+        SemaphoreHandle imageAvailableSemaphore;
+        FenceHandle inFlightFence;
+        SemaphoreHandle* renderFinishedSemaphore;
+        unsigned int renderFinishedCount;
+        CommandBufferHandle commandBuffer;
+        SwapchainHandle swapchain;
+        unsigned int imageIndex;
     };
     void CmdSubmitFrame(CmdSubmitInfo& info);
+
+
 }

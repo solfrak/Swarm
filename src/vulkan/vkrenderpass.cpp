@@ -11,7 +11,8 @@
 
 namespace swarm
 {
-    RenderpassHandle CreateRenderpass(DeviceHandle device, SwapchainHandle swapchain, const RenderpassCreateInfo &renderpassCreateInfo)
+    RenderpassHandle CreateRenderpass(DeviceHandle device, SwapchainHandle swapchain,
+                                      const RenderpassCreateInfo &renderpassCreateInfo)
     {
         assert(g_SwarmLibrary.isInitialized);
         assert(device);
@@ -83,6 +84,7 @@ namespace swarm
 
         return handle;
     }
+
     void DestroyRenderpass(DeviceHandle device, RenderpassHandle &handle)
     {
         assert(g_SwarmLibrary.isInitialized);
@@ -92,5 +94,28 @@ namespace swarm
         vkDestroyRenderPass(device->device, handle->renderPass, nullptr);
 
         SWARM_DELETE(handle);
+    }
+
+
+    void RenderpassSetClearValue(RenderpassHandle renderpass, const std::vector<ClearValue> &clearValues)
+    {
+        assert(g_SwarmLibrary.isInitialized);
+        assert(renderpass);
+
+        renderpass->clearValues.resize(clearValues.size());
+        int i = 0;
+        for (const auto &clearValue: clearValues)
+        {
+            if (clearValue.type == ClearValueType::COLOR)
+            {
+                VkClearColorValue clearColorValue{clearValue.color.r, clearValue.color.g, clearValue.color.b, clearValue.color.a};
+                renderpass->clearValues[i].color = clearColorValue;
+            } else if (clearValue.type == ClearValueType::DEPTH)
+            {
+                VkClearDepthStencilValue clearDepthStencilValue{clearValue.depthStencil.depth, clearValue.depthStencil.stencil};
+                renderpass->clearValues[i].depthStencil = clearDepthStencilValue;
+            }
+            i++;
+        }
     }
 }
